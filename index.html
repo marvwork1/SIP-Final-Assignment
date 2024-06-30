@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>FIRESTATION ACCESSIBILITY IN CIREBON REGENCY</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/AdministrativeBoundaries_1.js"></script>
+        <script src="data/NumberofFires20212023perVillage_2.js"></script>
+        <script src="data/VillageClassificationbyFirestationResponseTime_3.js"></script>
+        <script src="data/RoadNetwork_5.js"></script>
+        <script src="data/ResponseTimetoFireLocation_6.js"></script>
+        <script src="data/LongestTravel_7.js"></script>
+        <script src="data/ModerateTravel_8.js"></script>
+        <script src="data/FastestTravel_9.js"></script>
+        <script src="data/FireStation_10.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[-6.851389481586784,108.5783674971042],[-6.727412706413047,108.70427798285523]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var title = new L.Control({'position':'topright'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>FIRESTATION ACCESSIBILITY IN CIREBON REGENCY</h2>';
+        };
+        title.addTo(map);
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleHybrid_0');
+        map.getPane('pane_GoogleHybrid_0').style.zIndex = 400;
+        var layer_GoogleHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleHybrid_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleHybrid_0;
+        map.addLayer(layer_GoogleHybrid_0);
+        function pop_AdministrativeBoundaries_1(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_AdministrativeBoundaries_1_0() {
+            return {
+                pane: 'pane_AdministrativeBoundaries_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '15.0,3.0,6.0,3.0,6.0,3.0',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 3.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(114,155,111,0.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_AdministrativeBoundaries_1');
+        map.getPane('pane_AdministrativeBoundaries_1').style.zIndex = 401;
+        map.getPane('pane_AdministrativeBoundaries_1').style['mix-blend-mode'] = 'normal';
+        var layer_AdministrativeBoundaries_1 = new L.geoJson(json_AdministrativeBoundaries_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AdministrativeBoundaries_1',
+            layerName: 'layer_AdministrativeBoundaries_1',
+            pane: 'pane_AdministrativeBoundaries_1',
+            onEachFeature: pop_AdministrativeBoundaries_1,
+            style: style_AdministrativeBoundaries_1_0,
+        });
+        bounds_group.addLayer(layer_AdministrativeBoundaries_1);
+        map.addLayer(layer_AdministrativeBoundaries_1);
+        function pop_NumberofFires20212023perVillage_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">District</th>\
+                        <td>' + (feature.properties['District'] !== null ? autolinker.link(feature.properties['District'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Village</th>\
+                        <td>' + (feature.properties['Village'] !== null ? autolinker.link(feature.properties['Village'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Fires</th>\
+                        <td>' + (feature.properties['Fires'] !== null ? autolinker.link(feature.properties['Fires'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Trip Time</th>\
+                        <td>' + (feature.properties['Trip Time'] !== null ? autolinker.link(feature.properties['Trip Time'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_NumberofFires20212023perVillage_2_0(feature) {
+            switch(String(feature.properties['Fires'])) {
+                case '0':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,245,240,0.7)',
+                interactive: true,
+            }
+                    break;
+                case '1':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,214,196,0.7)',
+                interactive: true,
+            }
+                    break;
+                case '2':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,164,134,0.7)',
+                interactive: true,
+            }
+                    break;
+                case '3':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,112,80,0.7)',
+                interactive: true,
+            }
+                    break;
+                case '4':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,55,42,0.7)',
+                interactive: true,
+            }
+                    break;
+                case '5':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(186,20,25,0.7)',
+                interactive: true,
+            }
+                    break;
+                case '6':
+                    return {
+                pane: 'pane_NumberofFires20212023perVillage_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.7)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(103,0,13,0.7)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_NumberofFires20212023perVillage_2');
+        map.getPane('pane_NumberofFires20212023perVillage_2').style.zIndex = 402;
+        map.getPane('pane_NumberofFires20212023perVillage_2').style['mix-blend-mode'] = 'normal';
+        var layer_NumberofFires20212023perVillage_2 = new L.geoJson(json_NumberofFires20212023perVillage_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_NumberofFires20212023perVillage_2',
+            layerName: 'layer_NumberofFires20212023perVillage_2',
+            pane: 'pane_NumberofFires20212023perVillage_2',
+            onEachFeature: pop_NumberofFires20212023perVillage_2,
+            style: style_NumberofFires20212023perVillage_2_0,
+        });
+        bounds_group.addLayer(layer_NumberofFires20212023perVillage_2);
+        map.addLayer(layer_NumberofFires20212023perVillage_2);
+        function pop_VillageClassificationbyFirestationResponseTime_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">District</th>\
+                        <td>' + (feature.properties['District'] !== null ? autolinker.link(feature.properties['District'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Village</th>\
+                        <td>' + (feature.properties['Village'] !== null ? autolinker.link(feature.properties['Village'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Fires</th>\
+                        <td>' + (feature.properties['Fires'] !== null ? autolinker.link(feature.properties['Fires'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Trip Time</th>\
+                        <td>' + (feature.properties['Trip Time'] !== null ? autolinker.link(feature.properties['Trip Time'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_VillageClassificationbyFirestationResponseTime_3_0(feature) {
+            switch(String(feature.properties['Trip Time'])) {
+                case 'Fast':
+                    return {
+                pane: 'pane_VillageClassificationbyFirestationResponseTime_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,178,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Long':
+                    return {
+                pane: 'pane_VillageClassificationbyFirestationResponseTime_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,183,81,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Moderate':
+                    return {
+                pane: 'pane_VillageClassificationbyFirestationResponseTime_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,86,41,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Overtime':
+                    return {
+                pane: 'pane_VillageClassificationbyFirestationResponseTime_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(189,0,38,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_VillageClassificationbyFirestationResponseTime_3');
+        map.getPane('pane_VillageClassificationbyFirestationResponseTime_3').style.zIndex = 403;
+        map.getPane('pane_VillageClassificationbyFirestationResponseTime_3').style['mix-blend-mode'] = 'normal';
+        var layer_VillageClassificationbyFirestationResponseTime_3 = new L.geoJson(json_VillageClassificationbyFirestationResponseTime_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_VillageClassificationbyFirestationResponseTime_3',
+            layerName: 'layer_VillageClassificationbyFirestationResponseTime_3',
+            pane: 'pane_VillageClassificationbyFirestationResponseTime_3',
+            onEachFeature: pop_VillageClassificationbyFirestationResponseTime_3,
+            style: style_VillageClassificationbyFirestationResponseTime_3_0,
+        });
+        bounds_group.addLayer(layer_VillageClassificationbyFirestationResponseTime_3);
+        map.addLayer(layer_VillageClassificationbyFirestationResponseTime_3);
+        map.createPane('pane_AccessValue_4');
+        map.getPane('pane_AccessValue_4').style.zIndex = 404;
+        var img_AccessValue_4 = 'data/AccessValue_4.png';
+        var img_bounds_AccessValue_4 = [[-6.976682803556333,108.33420076573184],[-6.575436490346508,108.8777601682562]];
+        var layer_AccessValue_4 = new L.imageOverlay(img_AccessValue_4,
+                                              img_bounds_AccessValue_4,
+                                              {pane: 'pane_AccessValue_4'});
+        bounds_group.addLayer(layer_AccessValue_4);
+        map.addLayer(layer_AccessValue_4);
+        function pop_RoadNetwork_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Road Name</th>\
+                        <td>' + (feature.properties['Road Name'] !== null ? autolinker.link(feature.properties['Road Name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Avg. speed</th>\
+                        <td>' + (feature.properties['Avg. speed'] !== null ? autolinker.link(feature.properties['Avg. speed'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Road Type</th>\
+                        <td>' + (feature.properties['Road Type'] !== null ? autolinker.link(feature.properties['Road Type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_RoadNetwork_5_0() {
+            return {
+                pane: 'pane_RoadNetwork_5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        function style_RoadNetwork_5_1() {
+            return {
+                pane: 'pane_RoadNetwork_5',
+                opacity: 1,
+                color: 'rgba(255,234,1,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_RoadNetwork_5');
+        map.getPane('pane_RoadNetwork_5').style.zIndex = 405;
+        map.getPane('pane_RoadNetwork_5').style['mix-blend-mode'] = 'normal';
+        var layer_RoadNetwork_5 = new L.geoJson.multiStyle(json_RoadNetwork_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_RoadNetwork_5',
+            layerName: 'layer_RoadNetwork_5',
+            pane: 'pane_RoadNetwork_5',
+            onEachFeature: pop_RoadNetwork_5,
+            styles: [style_RoadNetwork_5_0,style_RoadNetwork_5_1,]
+        });
+        bounds_group.addLayer(layer_RoadNetwork_5);
+        map.addLayer(layer_RoadNetwork_5);
+        function pop_ResponseTimetoFireLocation_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['start'] !== null ? autolinker.link(feature.properties['start'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['end'] !== null ? autolinker.link(feature.properties['end'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cost</th>\
+                        <td>' + (feature.properties['cost'] !== null ? autolinker.link(feature.properties['cost'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(feature.properties['layer'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(feature.properties['path'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ResponseTimetoFireLocation_6_0(feature) {
+            if (feature.properties['cost'] >= 0.000000 && feature.properties['cost'] <= 0.134000 ) {
+                return {
+                pane: 'pane_ResponseTimetoFireLocation_6',
+                opacity: 1,
+                color: 'rgba(1,255,196,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+            }
+            if (feature.properties['cost'] >= 0.134000 && feature.properties['cost'] <= 0.175000 ) {
+                return {
+                pane: 'pane_ResponseTimetoFireLocation_6',
+                opacity: 1,
+                color: 'rgba(73,255,1,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+            }
+            if (feature.properties['cost'] >= 0.175000 && feature.properties['cost'] <= 0.250000 ) {
+                return {
+                pane: 'pane_ResponseTimetoFireLocation_6',
+                opacity: 1,
+                color: 'rgba(192,255,1,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+            }
+            if (feature.properties['cost'] >= 0.250000 && feature.properties['cost'] <= 0.400000 ) {
+                return {
+                pane: 'pane_ResponseTimetoFireLocation_6',
+                opacity: 1,
+                color: 'rgba(255,179,1,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_ResponseTimetoFireLocation_6');
+        map.getPane('pane_ResponseTimetoFireLocation_6').style.zIndex = 406;
+        map.getPane('pane_ResponseTimetoFireLocation_6').style['mix-blend-mode'] = 'normal';
+        var layer_ResponseTimetoFireLocation_6 = new L.geoJson(json_ResponseTimetoFireLocation_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ResponseTimetoFireLocation_6',
+            layerName: 'layer_ResponseTimetoFireLocation_6',
+            pane: 'pane_ResponseTimetoFireLocation_6',
+            onEachFeature: pop_ResponseTimetoFireLocation_6,
+            style: style_ResponseTimetoFireLocation_6_0,
+        });
+        bounds_group.addLayer(layer_ResponseTimetoFireLocation_6);
+        map.addLayer(layer_ResponseTimetoFireLocation_6);
+        function pop_LongestTravel_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Reached by</th>\
+                        <td>' + (feature.properties['Reached by'] !== null ? autolinker.link(feature.properties['Reached by'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Response</th>\
+                        <td>' + (feature.properties['Response'] !== null ? autolinker.link(feature.properties['Response'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_LongestTravel_7_0() {
+            return {
+                pane: 'pane_LongestTravel_7',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        function style_LongestTravel_7_1() {
+            return {
+                pane: 'pane_LongestTravel_7',
+                opacity: 1,
+                color: 'rgba(26,104,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_LongestTravel_7');
+        map.getPane('pane_LongestTravel_7').style.zIndex = 407;
+        map.getPane('pane_LongestTravel_7').style['mix-blend-mode'] = 'normal';
+        var layer_LongestTravel_7 = new L.geoJson.multiStyle(json_LongestTravel_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LongestTravel_7',
+            layerName: 'layer_LongestTravel_7',
+            pane: 'pane_LongestTravel_7',
+            onEachFeature: pop_LongestTravel_7,
+            styles: [style_LongestTravel_7_0,style_LongestTravel_7_1,]
+        });
+        bounds_group.addLayer(layer_LongestTravel_7);
+        map.addLayer(layer_LongestTravel_7);
+        function pop_ModerateTravel_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Reached by</th>\
+                        <td>' + (feature.properties['Reached by'] !== null ? autolinker.link(feature.properties['Reached by'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Response</th>\
+                        <td>' + (feature.properties['Response'] !== null ? autolinker.link(feature.properties['Response'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ModerateTravel_8_0() {
+            return {
+                pane: 'pane_ModerateTravel_8',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        function style_ModerateTravel_8_1() {
+            return {
+                pane: 'pane_ModerateTravel_8',
+                opacity: 1,
+                color: 'rgba(15,146,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ModerateTravel_8');
+        map.getPane('pane_ModerateTravel_8').style.zIndex = 408;
+        map.getPane('pane_ModerateTravel_8').style['mix-blend-mode'] = 'normal';
+        var layer_ModerateTravel_8 = new L.geoJson.multiStyle(json_ModerateTravel_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ModerateTravel_8',
+            layerName: 'layer_ModerateTravel_8',
+            pane: 'pane_ModerateTravel_8',
+            onEachFeature: pop_ModerateTravel_8,
+            styles: [style_ModerateTravel_8_0,style_ModerateTravel_8_1,]
+        });
+        bounds_group.addLayer(layer_ModerateTravel_8);
+        map.addLayer(layer_ModerateTravel_8);
+        function pop_FastestTravel_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Reached by</th>\
+                        <td>' + (feature.properties['Reached by'] !== null ? autolinker.link(feature.properties['Reached by'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Response</th>\
+                        <td>' + (feature.properties['Response'] !== null ? autolinker.link(feature.properties['Response'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FastestTravel_9_0() {
+            return {
+                pane: 'pane_FastestTravel_9',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        function style_FastestTravel_9_1() {
+            return {
+                pane: 'pane_FastestTravel_9',
+                opacity: 1,
+                color: 'rgba(1,255,52,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FastestTravel_9');
+        map.getPane('pane_FastestTravel_9').style.zIndex = 409;
+        map.getPane('pane_FastestTravel_9').style['mix-blend-mode'] = 'normal';
+        var layer_FastestTravel_9 = new L.geoJson.multiStyle(json_FastestTravel_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FastestTravel_9',
+            layerName: 'layer_FastestTravel_9',
+            pane: 'pane_FastestTravel_9',
+            onEachFeature: pop_FastestTravel_9,
+            styles: [style_FastestTravel_9_0,style_FastestTravel_9_1,]
+        });
+        bounds_group.addLayer(layer_FastestTravel_9);
+        map.addLayer(layer_FastestTravel_9);
+        function pop_FireStation_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td>' + (feature.properties['Name'] !== null ? autolinker.link(feature.properties['Name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Subdistric</th>\
+                        <td>' + (feature.properties['Subdistric'] !== null ? autolinker.link(feature.properties['Subdistric'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">District</th>\
+                        <td>' + (feature.properties['District'] !== null ? autolinker.link(feature.properties['District'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Zip Code</th>\
+                        <td>' + (feature.properties['Zip Code'] !== null ? autolinker.link(feature.properties['Zip Code'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FireStation_10_0() {
+            return {
+                pane: 'pane_FireStation_10',
+                shape: 'diamond',
+                radius: 4.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,0,109,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FireStation_10');
+        map.getPane('pane_FireStation_10').style.zIndex = 410;
+        map.getPane('pane_FireStation_10').style['mix-blend-mode'] = 'normal';
+        var layer_FireStation_10 = new L.geoJson(json_FireStation_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FireStation_10',
+            layerName: 'layer_FireStation_10',
+            pane: 'pane_FireStation_10',
+            onEachFeature: pop_FireStation_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_FireStation_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FireStation_10);
+        map.addLayer(layer_FireStation_10);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: '<img src="legend/FireStation_10.png" /> Fire Station', layer: layer_FireStation_10},
+        {label: '<b>Firestation Network Accessibility by response time</b>', selectAllCheckbox: true, children: [
+            {label: '<img src="legend/FastestTravel_9.png" /> Fastest Travel', layer: layer_FastestTravel_9},
+            {label: '<img src="legend/ModerateTravel_8.png" /> Moderate Travel', layer: layer_ModerateTravel_8},
+            {label: '<img src="legend/LongestTravel_7.png" /> Longest Travel', layer: layer_LongestTravel_7},]},
+            {label: 'Response Time to Fire Location<br /><table><tr><td style="text-align: center;"><img src="legend/ResponseTimetoFireLocation_6_Fastest0.png" /></td><td>Fastest</td></tr><tr><td style="text-align: center;"><img src="legend/ResponseTimetoFireLocation_6_Moderate1.png" /></td><td>Moderate</td></tr><tr><td style="text-align: center;"><img src="legend/ResponseTimetoFireLocation_6_Longest2.png" /></td><td>Longest</td></tr><tr><td style="text-align: center;"><img src="legend/ResponseTimetoFireLocation_6_Overtime3.png" /></td><td>Overtime</td></tr></table>', layer: layer_ResponseTimetoFireLocation_6},
+            {label: '<img src="legend/RoadNetwork_5.png" /> Road Network', layer: layer_RoadNetwork_5},
+            {label: "Access Value", layer: layer_AccessValue_4},
+            {label: 'Village Classification by Firestation Response Time<br /><table><tr><td style="text-align: center;"><img src="legend/VillageClassificationbyFirestationResponseTime_3_Fast0.png" /></td><td>Fast</td></tr><tr><td style="text-align: center;"><img src="legend/VillageClassificationbyFirestationResponseTime_3_Long1.png" /></td><td>Long</td></tr><tr><td style="text-align: center;"><img src="legend/VillageClassificationbyFirestationResponseTime_3_Moderate2.png" /></td><td>Moderate</td></tr><tr><td style="text-align: center;"><img src="legend/VillageClassificationbyFirestationResponseTime_3_Overtime3.png" /></td><td>Overtime</td></tr></table>', layer: layer_VillageClassificationbyFirestationResponseTime_3},
+            {label: 'Number of Fires 2021-2023 per Village<br /><table><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_00.png" /></td><td>0</td></tr><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_11.png" /></td><td>1</td></tr><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_22.png" /></td><td>2</td></tr><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_33.png" /></td><td>3</td></tr><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_44.png" /></td><td>4</td></tr><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_55.png" /></td><td>5</td></tr><tr><td style="text-align: center;"><img src="legend/NumberofFires20212023perVillage_2_56.png" /></td><td>5<</td></tr></table>', layer: layer_NumberofFires20212023perVillage_2},
+            {label: '<img src="legend/AdministrativeBoundaries_1.png" /> Administrative Boundaries', layer: layer_AdministrativeBoundaries_1},
+            {label: "Google Hybrid", layer: layer_GoogleHybrid_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+        setBounds();
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        </script>
+    </body>
+</html>
